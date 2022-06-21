@@ -1,20 +1,49 @@
 PODS:
   - Alamofire (5.6.1)
+  - netfox (1.21.0)
+  - Networkable (1.1.0)
   - ObjectMapper (4.2.0)
+  - RxAlamofire (6.1.1):
+    - RxAlamofire/Core (= 6.1.1)
+  - RxAlamofire/Core (6.1.1):
+    - Alamofire (~> 5.4)
+    - RxSwift (~> 6.0)
+  - RxCocoa (6.5.0):
+    - RxRelay (= 6.5.0)
+    - RxSwift (= 6.5.0)
+  - RxRelay (6.5.0):
+    - RxSwift (= 6.5.0)
+  - RxSwift (6.5.0)
 
 DEPENDENCIES:
-  - Alamofire
+  - netfox
+  - Networkable
   - ObjectMapper
+  - RxAlamofire
+  - RxCocoa
+  - RxSwift
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - netfox
+    - Networkable
     - ObjectMapper
+    - RxAlamofire
+    - RxCocoa
+    - RxRelay
+    - RxSwift
 
 SPEC CHECKSUMS:
   Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
+  netfox: 9d5cc727fe7576c4c7688a2504618a156b7d44b7
+  Networkable: dad0e62dee81596927e4bacfecbaea5f6823e179
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
+  RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
+  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
+  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
 
-PODFILE CHECKSUM: f1d578edb4c27d6fc694a63b54437865db956c5e
+PODFILE CHECKSUM: 0b7e89da206601a733227d601b233bd270c4c37b
 
 COCOAPODS: 1.11.3
