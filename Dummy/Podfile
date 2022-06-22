@@ -10,6 +10,9 @@ target 'Dummy' do
   pod 'RxSwift'
   pod 'RxAlamofire'
   pod 'RxCocoa'
+  pod 'SwifterSwift'
+  pod 'SVPullToRefresh'
+  pod 'IQKeyboardManagerSwift'
 
 end
 

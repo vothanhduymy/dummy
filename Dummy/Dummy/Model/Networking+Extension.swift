@@ -13,7 +13,6 @@ extension Endpoint {
     
     var headers: [String : String]? {
         let dicHeader: [String : String] = [
-            "Content-Type": "application/json",
             "app-id": API_ID,
         ]
         return dicHeader
