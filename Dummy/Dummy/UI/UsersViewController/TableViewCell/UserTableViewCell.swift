@@ -27,8 +27,6 @@ class UserTableViewCell: UITableViewCell {
     func reloadData(_ userListItem: UserListItem) {
         lblFirstName.text = userListItem.firstName
         lblLastName.text = userListItem.lastName
-        if let url = URL(string: userListItem.picture) {
-            imgPicture.download(from: url, placeholder: defaultImage)
-        }
+        imgPicture.nukeLoadImage(url: URL(string: userListItem.picture))
     }
 }

@@ -18,6 +18,7 @@ class DetailViewModel: BaseViewModel {
         var isLoading: PublishSubject<Bool>
         var responseError: PublishSubject<ResponseError>
         var updateUser: PublishSubject<Bool>
+        var deleteUser: PublishSubject<String>
     }
     
     init(repository: DefaultDummyRepository = DefaultDummyRepository.shared) {
@@ -25,7 +26,8 @@ class DetailViewModel: BaseViewModel {
         output = Output(
             isLoading: PublishSubject<Bool>(),
             responseError: PublishSubject<ResponseError>(),
-            updateUser: PublishSubject<Bool>()
+            updateUser: PublishSubject<Bool>(),
+            deleteUser: PublishSubject<String>()
         )
     }
     
@@ -46,6 +48,26 @@ class DetailViewModel: BaseViewModel {
                         self.user = _user
                         self.output.updateUser.onNext(true)
                     }
+                case .failure(let error):
+                    self.output.responseError.onNext(error.toResponseError())
+                }
+            }, onError: { [weak self] error in
+                guard let self = self else { return }
+                self.output.isLoading.onNext(false)
+                self.output.responseError.onNext(error.toResponseError())
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func deleteUser() {
+        output.isLoading.onNext(true)
+        repo.deleteUser(user: user)
+            .subscribe(onNext: { [weak self] result in
+                guard let self = self else { return }
+                self.output.isLoading.onNext(false)
+                switch result {
+                case .success(let response):
+                    self.output.deleteUser.onNext(response.id ?? "")
                 case .failure(let error):
                     self.output.responseError.onNext(error.toResponseError())
                 }

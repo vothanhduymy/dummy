@@ -9,22 +9,13 @@ import Foundation
 
 struct BaseResponse<T: Codable>: Codable {
     var result: Bool?
-    var code, message: String?
-    var validatedMessage: String?
-    var messageHtml: String?
     var data: BaseModel<T>?
     var additional: String?
+    var id: String?
+    var error: ResponseError?
     
     var isSuccess: Bool {
         return result == true
-    }
-    
-    var toResponseError: ResponseError {
-        var error = ResponseError()
-        error.code = code ?? ""
-        error.message = message ?? ""
-        error.messageHtml = messageHtml ?? ""
-        return error
     }
 }
 
@@ -99,24 +90,26 @@ enum BaseModel<T: Codable>: Codable {
 
 
 struct ResponseError: LocalizedError, Codable {
-    
-    var code: String = ""
-    var message: String = ""
-    var messageHtml: String = ""
+    var error: String = ""
+    var data: DataError?
     
     var localizedDescription: String {
-        return message
+        return data?.data ?? ""
     }
     
     var errorDescription: String? {
-        return message
+        return data?.data
     }
     
     var failureReason: String? {
-        return message
+        return data?.data
     }
     
     var helpAnchor: String? {
-        return code
+        return error
     }
+}
+
+struct DataError: Codable {
+    var data: String = ""
 }

@@ -12,6 +12,7 @@ class UserViewModel: BaseViewModel, BaseViewModelType {
     let repo: DefaultDummyRepository
     private let disposeBag = DisposeBag()
     var users: [UserListItem] = []
+    var showUsers: [UserListItem] = []
     var output: UserViewModel.Output
     var paging: Paging = Paging()
     
@@ -51,11 +52,12 @@ class UserViewModel: BaseViewModel, BaseViewModelType {
                         } else {
                             self.users = _users
                         }
+                        self.showUsers = self.users
+                        
                         if _users.count < self.paging.limit {
                             self.output.getUsers.onNext(false)
-                        } else {
-                            self.output.getUsers.onNext(isMore)
                         }
+                        self.output.getUsers.onNext(true)
                     }
                 case .failure(let error):
                     self.output.responseError.onNext(error.toResponseError())

@@ -1,14 +1,24 @@
 PODS:
-  - Alamofire (5.6.1)
   - IQKeyboardManagerSwift (6.5.10)
+  - libwebp (1.1.0):
+    - libwebp/demux (= 1.1.0)
+    - libwebp/mux (= 1.1.0)
+    - libwebp/webp (= 1.1.0)
+  - libwebp/demux (1.1.0):
+    - libwebp/webp
+  - libwebp/mux (1.1.0):
+    - libwebp/demux
+  - libwebp/webp (1.1.0)
   - netfox (1.21.0)
   - Networkable (1.1.0)
+  - Nuke (9.5.0)
+  - Nuke-WebP-Plugin (6.0.1):
+    - libwebp (= 1.1.0)
+    - Nuke (~> 9.0)
+  - NVActivityIndicatorView (4.8.0):
+    - NVActivityIndicatorView/Presenter (= 4.8.0)
+  - NVActivityIndicatorView/Presenter (4.8.0)
   - ObjectMapper (4.2.0)
-  - RxAlamofire (6.1.1):
-    - RxAlamofire/Core (= 6.1.1)
-  - RxAlamofire/Core (6.1.1):
-    - Alamofire (~> 5.4)
-    - RxSwift (~> 6.0)
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
@@ -46,21 +56,24 @@ DEPENDENCIES:
   - IQKeyboardManagerSwift
   - netfox
   - Networkable
+  - Nuke
+  - Nuke-WebP-Plugin
+  - NVActivityIndicatorView (= 4.8.0)
   - ObjectMapper
-  - RxAlamofire
   - RxCocoa
-  - RxSwift
   - SVPullToRefresh
   - SwifterSwift
 
 SPEC REPOS:
   trunk:
-    - Alamofire
     - IQKeyboardManagerSwift
+    - libwebp
     - netfox
     - Networkable
+    - Nuke
+    - Nuke-WebP-Plugin
+    - NVActivityIndicatorView
     - ObjectMapper
-    - RxAlamofire
     - RxCocoa
     - RxRelay
     - RxSwift
@@ -68,18 +81,20 @@ SPEC REPOS:
     - SwifterSwift
 
 SPEC CHECKSUMS:
-  Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
   IQKeyboardManagerSwift: 52962c76ab33532f15ad9f3ff4e5715eda5335bb
+  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   netfox: 9d5cc727fe7576c4c7688a2504618a156b7d44b7
   Networkable: dad0e62dee81596927e4bacfecbaea5f6823e179
+  Nuke: 6f400a4ea957e09149ec335a3c6acdcc814d89e4
+  Nuke-WebP-Plugin: ea80971975a0fff00900a0ad19bc146d6759ee25
+  NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
-  RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   SVPullToRefresh: ba2e718695a43253d8bea6852d2960097dc15d8c
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
 
-PODFILE CHECKSUM: 2277429be433661a9e543ddcf1f57cd25ec6875d
+PODFILE CHECKSUM: 4e33d6baf7ef801ae01bce27c3f539e3775a57af
 
 COCOAPODS: 1.11.3

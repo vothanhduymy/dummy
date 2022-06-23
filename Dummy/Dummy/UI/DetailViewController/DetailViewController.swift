@@ -9,6 +9,10 @@ import UIKit
 import RxSwift
 import SwifterSwift
 
+protocol DetailViewControllerDelegate: AnyObject {
+    func deleteUser(id: String)
+}
+
 class DetailViewController: UIViewController {
     private let disposeBag = DisposeBag()
     let viewModel = DetailViewModel()
@@ -17,6 +21,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var txtLastName: UITextField!
     @IBOutlet weak var txtEmail: UITextField!
     @IBOutlet weak var txtDateOfBirth: UITextField!
+    weak var delegate: DetailViewControllerDelegate?
     
     @IBOutlet weak var btnChangeName: UIButton!
     @IBOutlet weak var btnDelete: UIButton!
@@ -45,9 +50,7 @@ class DetailViewController: UIViewController {
     }
     
     private func fillData() {
-        if let url = URL(string: viewModel.user.picture) {
-            imgPicture.download(from: url, placeholder: defaultImage)
-        }
+        imgPicture.nukeLoadImage(url: URL(string: viewModel.user.picture))
         txtFirstName.text = viewModel.user.firstName
         txtLastName.text = viewModel.user.lastName
         txtEmail.text = viewModel.user.email
@@ -58,6 +61,19 @@ class DetailViewController: UIViewController {
     }
     
     private func bindViewModel() {
+        viewModel.output.deleteUser
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] deletedUserId in
+                guard let self = self else { return }
+                self.showAlert(title: "Delete success", message: nil) { [weak self]  _ in
+                    guard let self = self else { return }
+                    self.navigationController?.popViewController(animated: true, { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.deleteUser(id: deletedUserId)
+                    })
+                }
+            }).disposed(by: disposeBag)
+        
         viewModel.output.updateUser
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
@@ -72,7 +88,7 @@ class DetailViewController: UIViewController {
             .subscribe { [weak self] event in
                 guard let self = self,
                       let error = event.element else { return }
-                self.showAlert(title: error.code, message: error.message)
+                self.showAlert(title: error.error, message: error.data?.data)
             }.disposed(by: disposeBag)
         
         viewModel.output.isLoading
@@ -80,9 +96,9 @@ class DetailViewController: UIViewController {
             .subscribe { event in
                 guard let loading = event.element else { return }
                 if loading {
-                    //Pz.showLoadingLOTAnimation()
+                    Util.showLoading()
                 } else {
-                    //Pz.hideLoadingLOTAnimation()
+                    Util.hideLoading()
                 }
             }.disposed(by: disposeBag)
     }
@@ -114,7 +130,12 @@ class DetailViewController: UIViewController {
     }
     
     @IBAction func btnDeleteTapped(_ sender: Any) {
-        
+        view.endEditing(true)
+        showAlert(title: "Delete this user?", message: "Are you sure?", buttonTitles: ["Delete", "Cancel"], highlightedButtonIndex: 1) { [weak self] _index in
+            if _index == 0 {
+                self?.viewModel.deleteUser()
+            }
+        }
     }
     
     

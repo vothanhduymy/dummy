@@ -4,15 +4,16 @@ platform :ios, '13.0'
 target 'Dummy' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'ObjectMapper'
   pod 'netfox'
+  pod 'ObjectMapper'
   pod 'Networkable'
-  pod 'RxSwift'
-  pod 'RxAlamofire'
   pod 'RxCocoa'
   pod 'SwifterSwift'
   pod 'SVPullToRefresh'
   pod 'IQKeyboardManagerSwift'
+  pod 'Nuke'
+  pod 'Nuke-WebP-Plugin'
+  pod 'NVActivityIndicatorView', '4.8.0'
 
 end
 

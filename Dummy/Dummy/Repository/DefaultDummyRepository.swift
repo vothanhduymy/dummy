@@ -13,6 +13,7 @@ protocol DummyRepository {
     func getUsers(paging: Paging?) -> Observable<Result<BaseResponse<[UserListItem]>, Error>>
     func getUser(userListItem: UserListItem) -> Observable<Result<BaseModel<User>, Error>>
     func updateUser(user: UpdateUser) -> Observable<Result<BaseModel<User>, Error>>
+    func deleteUser(user: User) -> Observable<Result<BaseResponse<String>, Error>>
 }
 
 final class DefaultDummyRepository: DummyRepository {
@@ -36,6 +37,10 @@ final class DefaultDummyRepository: DummyRepository {
     func updateUser(user: UpdateUser) -> Observable<Result<BaseModel<User>, Error>> {
         return dataService.buildObservable(APIEndpoint.updateUser(user: user))
     }
+    
+    func deleteUser(user: User) -> Observable<Result<BaseResponse<String>, Error>> {
+        return dataService.buildObservable(APIEndpoint.deleteUser(user: user))
+    }
 }
 
 extension DefaultDummyRepository {
@@ -44,6 +49,7 @@ extension DefaultDummyRepository {
         case getUsers(paging: Paging?)
         case getUser(user: UserListItem)
         case updateUser(user: UpdateUser)
+        case deleteUser(user: User)
         
         var url: String {
             let apiBaseUrl = BASE_URL
@@ -58,6 +64,8 @@ extension DefaultDummyRepository {
                 return apiBaseUrl + "/user/\(userListItem.id)"
             case let .updateUser(user):
                 return apiBaseUrl + "/user/\(user.id ?? "")"
+            case let .deleteUser(user):
+                return apiBaseUrl + "/user/\(user.id)"
             }
         }
         
@@ -67,12 +75,14 @@ extension DefaultDummyRepository {
                 return .get
             case.updateUser:
                 return .put
+            case .deleteUser:
+                return .delete
             }
         }
         
         func body() throws -> Data? {
             switch self {
-            case .getUsers, .getUser:
+            case .getUsers, .getUser, .deleteUser:
                 return nil
             case let .updateUser(user):
                 var body: UpdateUser = UpdateUser()

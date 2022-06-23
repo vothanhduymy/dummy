@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 import SVPullToRefresh
 
 class UsersViewController: UIViewController {
@@ -29,6 +30,7 @@ class UsersViewController: UIViewController {
         
         viewModel.getUsers()
         bindViewModel()
+        setupSearchObserver()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,6 +51,7 @@ class UsersViewController: UIViewController {
                 self.tblContent.infiniteScrollingView.stopAnimating()
                 self.tblContent.reloadData()
                 self.tblContent.showsInfiniteScrolling = isShowsInfiniteScrolling
+                self.searchBar.clear()
             }).disposed(by: disposeBag)
         
         viewModel.output.getUser
@@ -59,6 +62,7 @@ class UsersViewController: UIViewController {
                     return
                 }
                 vc.viewModel.user = _user
+                vc.delegate = self
                 vc.hidesBottomBarWhenPushed = true
                 self.navigationController?.pushViewController(vc, animated: true)
             }).disposed(by: disposeBag)
@@ -68,7 +72,7 @@ class UsersViewController: UIViewController {
             .subscribe { [weak self] event in
                 guard let self = self,
                       let error = event.element else { return }
-                self.showAlert(title: error.code, message: error.message)
+                self.showAlert(title: error.error, message: error.data?.data)
             }.disposed(by: disposeBag)
         
         viewModel.output.isLoading
@@ -76,17 +80,40 @@ class UsersViewController: UIViewController {
             .subscribe { event in
                 guard let loading = event.element else { return }
                 if loading {
-                    //Pz.showLoadingLOTAnimation()
+                    Util.showLoading()
                 } else {
-                    //Pz.hideLoadingLOTAnimation()
+                    Util.hideLoading()
                 }
             }.disposed(by: disposeBag)
+    }
+    
+    private func setupSearchObserver() {
+        guard let txtSearch = searchBar.textField else { return }
+        
+        txtSearch
+            .rx.text
+            .orEmpty
+            .debounce(.seconds(0), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] t in
+                guard let self = self else { return }
+                if t.count == 0 {
+                    self.viewModel.showUsers = self.viewModel.users
+                } else {
+                    let tempArr = self.viewModel.showUsers.filter {
+                        return $0.firstName.contains(t) || $0.lastName.contains(t)
+                    }
+                    self.viewModel.showUsers = tempArr
+                }
+                self.tblContent.reloadData()
+            })
+            .disposed(by: disposeBag)
     }
 }
 
 extension UsersViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.users.count
+        return viewModel.showUsers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -96,7 +123,7 @@ extension UsersViewController: UITableViewDataSource {
         }
         
         
-        let userListItem: UserListItem = viewModel.users[indexPath.row]
+        let userListItem: UserListItem = viewModel.showUsers[indexPath.row]
         cell?.reloadData(userListItem)
         return cell ?? UITableViewCell()
     }
@@ -105,8 +132,20 @@ extension UsersViewController: UITableViewDataSource {
 extension UsersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let userListItem: UserListItem = viewModel.users[indexPath.row]
+        let userListItem: UserListItem = viewModel.showUsers[indexPath.row]
         view.endEditing(true)
         viewModel.getUser(userListItem: userListItem)
+    }
+}
+
+extension UsersViewController: DetailViewControllerDelegate {
+    func deleteUser(id: String) {
+        viewModel.users.removeAll(where: {
+            $0.id == id
+        })
+        viewModel.showUsers.removeAll(where: {
+            $0.id == id
+        })
+        tblContent.reloadData()
     }
 }
